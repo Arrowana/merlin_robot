@@ -14,15 +14,19 @@
   </gazebo>
 
   <gazebo reference="rwheel">
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
+    <mu1>200.2</mu1>
+    <mu2>200.2</mu2>
     <material>Gazebo/Black</material>
   </gazebo>
 
   <gazebo reference="lwheel">
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
+    <mu1>200.2</mu1>
+    <mu2>200.2</mu2>
     <material>Gazebo/Black</material>
   </gazebo>
 
+  <gazebo reference="fwheel">
+    <mu1>0.0001</mu1>
+    <mu2>0.0001</mu2>
+  </gazebo>
 </robot>

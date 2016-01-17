@@ -8,7 +8,7 @@
 
   <link name="world"/>
 
-  <joint name="fixed" type="fixed">
+  <joint name="fixed" type="floating">
     <parent link="world"/>
     <child link="base_link"/>
   </joint>
@@ -62,6 +62,7 @@
     <child link="lwheel"/>
     <origin xyz="0 0.115 0.046" rpy="1.5708 0 0"/>
     <axis xyz="0 0 1"/>
+    <dynamics damping="0.7"/>
   </joint>
   
   <link name="rwheel">
@@ -93,6 +94,7 @@
     <child link="rwheel"/>
     <origin xyz="0 -0.115 0.046" rpy="-1.5708 0 0"/>
     <axis xyz="0 0 1"/>
+    <dynamics damping="0.7"/>
   </joint>
   
   <link name="fwheel_attach">
@@ -123,6 +125,7 @@
     <parent link="base_link"/>
     <child link="fwheel_attach"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
   </joint>
   
   <link name="fwheel">
@@ -149,10 +152,11 @@
     </inertial>
   </link>
   
-  <joint name="base_to_fwheel" type="continuous">
+  <joint name="base_to_fwheel" type="fixed">
     <parent link="base_link"/>
     <child link="fwheel"/>
     <origin xyz="0.13 0 0.02" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
   </joint>
   
    <transmission name="tran1">
