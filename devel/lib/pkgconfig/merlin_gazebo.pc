@@ -1,0 +1,8 @@
+prefix=/home/pierre/merlin_robot/devel
+
+Name: merlin_gazebo
+Description: Description of merlin_gazebo
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/pierre/merlin_robot/devel/lib 
+Requires: 
