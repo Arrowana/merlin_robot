@@ -1,9 +1,16 @@
 <launch>
+  <arg name="nogz" default="false"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch" unless="$(arg nogz)">
+  </include>
+
   <!-- Load the URDF into the ROS Parameter Server -->
-  <param name="robot_description"
+  <param name="/merlin/robot_description"
      command="$(find xacro)/xacro.py '$(find merlin_description)/urdf/merlin.urdf.xacro'" />
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-    args="-urdf -model merlin -param robot_description"/>
+    args="-urdf -model merlin -param /merlin/robot_description"/>
+
+  <include file="$(find merlin_control)/launch/merlin_control.launch" />
 </launch>

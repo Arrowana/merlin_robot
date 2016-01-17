@@ -1,8 +1,0 @@
-prefix=/home/pierre/merlin_robot/devel
-
-Name: merlin_description
-Description: Description of merlin_description
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/pierre/merlin_robot/devel/lib 
-Requires: 
