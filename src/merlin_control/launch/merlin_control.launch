@@ -4,7 +4,7 @@
 
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/merlin" args="joint_state_controller mobile_base_controller">
+    output="screen" ns="/merlin" args="joint_state_controller base_controller">
   </node>
 
   <!-- convert joint states to TF transforms for rviz, etc -->

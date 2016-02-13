@@ -4,7 +4,7 @@ merlin:
     type: joint_state_controller/JointStateController
     publish_rate: 50  
 
-  mobile_base_controller:
+  base_controller:
     type: "diff_drive_controller/DiffDriveController"
     left_wheel: 'base_to_lwheel'
     right_wheel: 'base_to_rwheel'
