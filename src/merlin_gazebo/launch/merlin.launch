@@ -20,4 +20,6 @@
     args="-urdf -model merlin -param /merlin/robot_description"/>
 
   <include file="$(find merlin_control)/launch/merlin_control.launch" />
+
+  <node pkg="merlin_nav" type="path_store.py" name="path_store" />
 </launch>
