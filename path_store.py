@@ -1,31 +1,53 @@
+#!/usr/bin/python
+import rosbag
+import rospy
+
 from geometry_msgs.msg import Pose2D
 from merlin_msgs.msg import Path2D
 from merlin_msgs.srv import GetPaths, SavePath
 
-import rosbag
-import rospy
+PATH_FILE = 'paths.bag' 
 
-#Path2D is an array of Pose2D with name and id
 def load_paths():
     loaded_paths = []
 
-    with rosbag.Bag('paths.bag') as bag:
+    with rosbag.Bag(PATH_FILE) as bag:
         for topic, msg, t in bag.read_messages(['path']):
             print msg
+            loaded_paths.append(msg)
 
     return loaded_paths
-                
-def send_paths(req):
-    return GetPaths(paths)
 
-def save_path(req):
-    print req.path
+class PathStore:
+    def __init__(self):
+        rospy.init_node('path_store', log_level=rospy.DEBUG)
+
+        self.paths = load_paths()    
+
+        rospy.Service('get_paths', GetPaths, self.send_paths)
+        rospy.Service('save_path', SavePath, self.save_path)
+
+        rospy.loginfo('path_store started')
+
+        rospy.spin()
+                    
+    def send_paths(self, req):
+        answer = GetPaths()
+        answer.paths = self.paths
+        return {'paths': self.paths}
+
+    def save_path(self, req):
+        rospy.loginfo("Received a path: "+ req.path.name)
+        print req.path
+        
+        with rosbag.Bag(PATH_FILE, 'a') as bag:
+            bag.write('path', req.path)
+            self.paths.append(req.path)
+            rospy.loginfo("path saved")    
+
+        return []
+
 
 if __name__ == '__main__':
-    rospy.init_node('path_store')
+    PathStore()
 
-    paths = load_paths()    
-    
-    rospy.Service('get_paths', GetPaths, send_paths)
-    rospy.Service('save_path', SavePath, save_path)
-    rospy.spin()
