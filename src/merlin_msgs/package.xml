@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>merlin_msgs</name>
+  <version>0.0.0</version>
+  <description>The merlin_msgs package</description>
+  <maintainer email="pierre@todo.todo">pierre</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>message_generation</run_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
