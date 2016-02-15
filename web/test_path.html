@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+
+<canvas id="myCanvas" width="800" height="500" style="border:1px solid black;">
+    Votre navigateur ne supporte pas canvas.
+</canvas>
+    <select onchange="loadPath()" id="pathSelect">
+        <option>Choose a path</option>
+    </select>
+
+<script type="text/javascript" src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script type="text/javascript" src="http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+<script type="text/javascript">
+function draw_path(context, waypoints)
+{
+    function draw_arc(w1, w2, w3)
+    {
+        context.beginPath();
+        context.moveTo(w1.x, w1.y, w2.y);
+        context.arcTo(w2.x, w2.y, w3.x, w3.y, 30);
+        context.stroke();
+        context.closePath();
+    }
+
+    function draw_real_path(waypoints)
+    {
+        //Draw the line + arc
+        for(var i = 0; i<waypoints.length-2; i++)
+        {
+            draw_arc(waypoints[i], waypoints[i+1], waypoints[i+2]);
+
+            context.beginPath();
+            context.moveTo(waypoints[i].x, waypoints[i].y);
+            context.lineTo(waypoints[i+1].x, waypoints[i+1].y);
+        }
+        context.lineTo(waypoints[waypoints.length-1].x, waypoints[waypoints.length-1].y);
+        context.stroke();
+        context.closePath();
+    }
+
+    if(waypoints.length>=1)
+    {
+        draw_real_path()
+        //Draw a dot on top of each waypoint
+        for(var i=0; i<waypoints.length; i++)
+        {
+            context.beginPath();
+            context.arc(waypoints[i].x, waypoints[i].y, 5, 0, 2*Math.PI);
+            context.fill();
+            context.closePath(); 
+        }
+    }
+}
+</script>
+
+<script type="text/javascript">
+window.onload = function()
+{
+    var canvas = document.getElementById("myCanvas");
+    if(!canvas)
+    {
+        alert("Cannot get canvas");
+        return;
+    }
+    
+    var ctx = canvas.getContext("2d");
+    if(!ctx)
+    {
+        alert("Cannot get context");
+        return;
+    }
+
+    var waypoints = [];
+
+    //Pre populate waypoints with random data
+    var nb = 0;
+    for(var i = 0; i<nb; i++)
+    {
+        var point = {x: Math.floor(canvas.width*Math.random()), y: Math.floor(canvas.height*Math.random())};
+        console.log(point);
+        waypoints.push(point);
+    }
+    console.log(waypoints);
+
+    canvas.addEventListener("mousedown", getPosition, false);
+    function getPosition(event)
+    {
+      var x = event.x;
+      var y = event.y;
+
+      x -= canvas.offsetLeft;
+      y -= canvas.offsetTop;
+
+      waypoints.push({x: x, y: y});
+      draw_path(ctx, waypoints);
+    }
+
+}
+
+function drawRosPath(rosPath)
+{
+    pathWaypoints = []
+    for(var i=0; i< rosPath.length; i++)
+    {
+        pathWaypoints.push({x: rosPath[i].x*100,y: rosPath[i].y*100});
+        draw_real_path(pathWaypoints);
+    }
+}
+
+</script>
+<script type="text/javascript" type="text/javascript">
+  // Connecting to ROS
+  // -----------------
+
+  var ros = new ROSLIB.Ros({
+    url : 'ws://localhost:9090'
+  });
+
+  ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+  });
+
+  ros.on('error', function(error) {
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  ros.on('close', function() {
+    console.log('Connection to websocket server closed.');
+  });
+
+  // Calling a service
+  // -----------------
+
+  var getPathsClient = new ROSLIB.Service({
+    ros : ros,
+    name : '/get_paths',
+    serviceType : 'merlin_msgs/GetPaths'
+  });
+
+  var request = new ROSLIB.ServiceRequest({});
+  var paths = []
+
+  getPathsClient.callService(request, function(result) {
+    console.log('Result for service call '
+      + result.paths + result.length);
+    paths = result.paths;
+    build_select();
+  });
+
+function build_select(){
+  var select = document.getElementById('pathSelect');
+  for(var i = 0; i < paths.length; i++){
+    var el = document.createElement("option");
+    el.textContent = paths[i].name;
+    console.log("element created");
+    select.appendChild(el);
+  }
+}
+
+function loadPath()
+{
+  var select = document.getElementById('pathSelect');
+  var path_selected = select.value;
+  console.log("Selected: ", path_selected);
+  for(var i=0; i< paths.length;i++)
+    {
+        if(paths[i].name == path_selected)
+        {
+            console.log(paths[i].name);
+            console.log("found");
+            drawRosPath(paths[i]);
+            break;
+        }
+    }
+}
+  console.log("Finished");
+</script>
+
+</body>
+</html>

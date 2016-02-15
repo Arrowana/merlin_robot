@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+
+  <script type="text/javascript" src="http://cdn.robotwebtools.org/EaselJS/current/easeljs.min.js"></script>
+  <script type="text/javascript" src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+  <script type="text/javascript" src="http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+  <script type="text/javascript" src="http://cdn.robotwebtools.org/ros2djs/current/ros2d.min.js"></script>
+  <script type="text/javascript" src="http://cdn.robotwebtools.org/nav2djs/current/nav2d.min.js"></script>
+  <script type="text/javascript" src="http://cdn.robotwebtools.org/keyboardteleopjs/current/keyboardteleop.min.js"></script>
+</head>
+
+<body onload="init()">
+  <form action="" oninput="ospeed.value=ispeed.value">
+    <input name="ispeed" type="range" min="0" max="100" value="100" onchange="setSpeed(this.value)"></input>
+    <output name="ospeed" for="ispeed">100</output>
+    <br>
+    <div id="map"></div>
+  </form>
+
+  <script type="text/javascript" name="handler">
+    var connection;
+    var url = 'ws://192.168.1.120:9090';
+
+    function init() {
+      connection = new ROSLIB.Ros({ url:url });
+      var call = new Set([initTeleops, initTopics, initMap]);
+      call.forEach((f)=>f(connection));
+    }
+  </script>
+
+  <script type="text/javascript" name="teleops">
+    var teleop;
+    function initTeleops(connection) {
+      teleop = new KEYBOARDTELEOP.Teleop({
+        ros:connection, 
+        topic:'/cmd_vel',
+      });
+    }
+    function setSpeed(speed) { teleop.scale = (speed / 100); }
+  </script>
+  
+  <script type="text/javascript" name="cmd_vel">
+    function initTopics(connection) {
+      //var cmd_vel = new ROSLIB.Topic({ros:connection, name:'/cmd_vel', messageType: 'geometry_msgs/Twist'});
+      //cmd_vel.subscribe((message) => console.log(message));
+    }
+  </script>
+
+  <script type="text/javascript" name="viewer">
+    var zoomView;
+    var panView;
+    function initMap(connection) {
+      var viewer = new ROS2D.Viewer({ divID:'map', width:600, height:500});
+      var gridClient = new ROS2D.OccupancyGridSrvClient({ros:connection, rootObject: viewer.scene});
+
+      gridClient.on('change', () =>  
+        viewer.scaleToDimensions(gridClient.currentGrid.width, gridClient.currentGrid.height)
+      );
+      initNavigator(connection, viewer);
+
+      zoomView = new ROS2D.ZoomView({rootObject:viewer.scene});
+      panView = new ROS2D.PanView({rootObject:viewer.scene});
+    }
+
+    document.getElementById('map').addEventListener('wheel', (e) => e.deltaY > 0 ? zoomIn(e) : zoomOut(e) );
+    var directionsToPan = { // [x, y]
+      "Left": [-1, 0], "Right": [1, 0],
+      "Up": [0, 1], "Down": [0, -1]
+    }
+    document.addEventListener('keydown', (e) => {
+      if(Object.keys(directionsToPan).indexOf(e.keyIdentifier) < 0) return;
+
+      panView.startPan(0, 0);
+      panView.pan(...directionsToPan[e.keyIdentifier]);
+    });
+
+    function zoomIn(e) {
+      zoomView.startZoom(e.clientX, e.clientY);
+      zoomView.zoom(2);
+    }
+    function zoomOut(e) {
+      zoomView.startZoom(e.clientX, e.clientY)
+      zoomView.zoom(0.5);
+    }
+  </script>
+  
+  <script type="text/javascript" name="navigator">
+    function initNavigator(connection, viewer) {
+      var navigator = NAV2D.Navigator({
+        ros:connection,
+        serverName: '/move_base',
+        actionName: 'move_base_msgs/MoveBaseAction',
+        rootObject: viewer.scene,
+        withOrientation: true
+      });
+      //navigator.sendGoal(pose);
+/*
+      var navigator = NAV2D.OccupancyGridClientNav({
+        ros: connection,
+        rootObject: viewer.scene,
+        viewer:viewer,
+        serverName: '/pr2_move_base'
+      });*/
+
+      var robotMarker = new ROS2D.NavigationArrow({
+        size: 25, strokeSize: 1,
+        fillColor: createjs.Graphics.getRGB(255, 128,0, 0.65),
+      });
+      robotMarker.visible = false;
+      var initScaleSet = false;
+      viewer.addObject(robotMarker);
+
+/*      var poseListener = new ROSLIB.Topic({
+        ros:connection, 
+        name: '/odom',
+        messageType: 'nav_msgs/Odometry'
+      });
+      poseListener.subscribe((odom) => {
+        var pose = odom.pose.pose;
+        robotMarker.x = pose.position.x;
+        robotMarker.y = -pose.position.y;
+        if(!initScaleSet) {
+          robotMarker.scaleX = 1.0 / viewer.scene.scaleX;
+          robotMarker.scaleY = 1.0 / viewer.scene.scaleY;
+          initScaleSet = true;
+        }
+        robotMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(pose.orientation);
+        console.log(robotMarker);
+        robotMarker.visible = true;
+      });*/
+      var poseListener = new ROSLIB.Topic({
+        ros:connection, 
+        name: '/cmd_vel',
+        messageType: 'geometry_msgs/Twist'
+      });
+      var robotModel = {x:0, y:0, scaleX:null, scaleY:null, theta:null};
+
+      poseListener.subscribe((twist) => {
+        robotModel = updateRobotModel(twist, robotModel);
+      });
+
+      function updateRobotModel(twist, robot) {
+        var pose = twist;
+        robot = {
+          x: robot.x + pose.linear.x,
+          y: robot.y + pose.linear.y,
+          scaleX: Math.pow(viewer.scene.scaleX, -1),
+          scaleY: Math.pow(viewer.scene.scaleY, -1),
+          theta: robot.theta + ((pose.angular.z) * 0.1)
+        };
+        console.log(robot.theta);
+        //display(robot);
+        return robot;
+      }
+
+      var display = (model) => console.log(viewer.scene.rosToGlobal(model))
+    }
+  </script> 
+</body>
+</html>

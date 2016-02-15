@@ -15,6 +15,7 @@ For development launch an empty gazebo then kill/relaunch the spawn of the model
 roslaunch gazebo_ros empty_world.launch
 roslaunch merlin.launch nogz:=true
 
+launch rosbridge_server rosbridge_websocket.launch
 teleops from keyboard http://wiki.ros.org/teleop_twist_keyboard
 
 path_store.py is a proof of concept node to read/write path to a rosbag
