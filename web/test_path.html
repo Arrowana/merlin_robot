@@ -23,25 +23,28 @@ function draw_path(context, waypoints)
         context.closePath();
     }
 
-    function draw_real_path(waypoints)
+    function draw_real_path(wps)
     {
+        console.log(wps);
         //Draw the line + arc
-        for(var i = 0; i<waypoints.length-2; i++)
+        for(var i = 0; i<wps.length-2; i++)
         {
-            draw_arc(waypoints[i], waypoints[i+1], waypoints[i+2]);
+            draw_arc(wps[i], wps[i+1], wps[i+2]);
 
             context.beginPath();
-            context.moveTo(waypoints[i].x, waypoints[i].y);
-            context.lineTo(waypoints[i+1].x, waypoints[i+1].y);
+            context.moveTo(wps[i].x, wps[i].y);
+            context.lineTo(wps[i+1].x, wps[i+1].y);
         }
-        context.lineTo(waypoints[waypoints.length-1].x, waypoints[waypoints.length-1].y);
+        context.lineTo(wps[wps.length-1].x, wps[wps.length-1].y);
         context.stroke();
         context.closePath();
     }
 
     if(waypoints.length>=1)
     {
-        draw_real_path()
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        draw_real_path(waypoints);
         //Draw a dot on top of each waypoint
         for(var i=0; i<waypoints.length; i++)
         {
@@ -55,21 +58,20 @@ function draw_path(context, waypoints)
 </script>
 
 <script type="text/javascript">
+var canvas = document.getElementById("myCanvas");
+if(!canvas)
+{
+    alert("Cannot get canvas");
+}
+
+var ctx = canvas.getContext("2d");
+if(!ctx)
+{
+    alert("Cannot get context");
+}
+
 window.onload = function()
 {
-    var canvas = document.getElementById("myCanvas");
-    if(!canvas)
-    {
-        alert("Cannot get canvas");
-        return;
-    }
-    
-    var ctx = canvas.getContext("2d");
-    if(!ctx)
-    {
-        alert("Cannot get context");
-        return;
-    }
 
     var waypoints = [];
 
@@ -100,12 +102,17 @@ window.onload = function()
 
 function drawRosPath(rosPath)
 {
+    console.log("Start to draw rospath", rosPath.poses);
     pathWaypoints = []
-    for(var i=0; i< rosPath.length; i++)
+    for(var i=0; i< rosPath.poses.length; i++)
     {
-        pathWaypoints.push({x: rosPath[i].x*100,y: rosPath[i].y*100});
-        draw_real_path(pathWaypoints);
+        pathWaypoints.push({x: rosPath.poses[i].x*50,y: rosPath.poses[i].y*50});
+        console.log(pathWaypoints[i]);
     }
+
+    console.log(pathWaypoints);
+    draw_path(ctx, pathWaypoints);
+    console.log("Done drawing");
 }
 
 </script>
