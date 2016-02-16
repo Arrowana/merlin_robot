@@ -18,6 +18,8 @@ roslaunch merlin.launch nogz:=true
 launch rosbridge_server rosbridge_websocket.launch
 teleops from keyboard http://wiki.ros.org/teleop_twist_keyboard
 
+rostopic pub -r 10 merlin/base_contller/cmd_vel geometry_msgs/Twist '[0.5, 0, 0]' '[0,0,0.4]'
+
 path_store.py is a proof of concept node to read/write path to a rosbag
 //get existing paths
 rosservice call get_paths "{}"

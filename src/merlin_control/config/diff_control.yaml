@@ -1,12 +1,11 @@
-merlin:
-  # Publish all joint states -----------------------------------
-  joint_state_controller:
-    type: joint_state_controller/JointStateController
-    publish_rate: 50  
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50  
 
-  base_controller:
-    type: "diff_drive_controller/DiffDriveController"
-    left_wheel: 'base_to_lwheel'
-    right_wheel: 'base_to_rwheel'
-    pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
-    twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+base_controller:
+  type: "diff_drive_controller/DiffDriveController"
+  left_wheel: 'base_to_lwheel'
+  right_wheel: 'base_to_rwheel'
+  pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+  twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]

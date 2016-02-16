@@ -8,13 +8,23 @@
     <select onchange="loadPath()" id="pathSelect">
         <option>Choose a path</option>
     </select>
+<button>Play</button>
+<button>Stop</button>
 
 <script type="text/javascript" src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
 <script type="text/javascript" src="http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
 <script type="text/javascript">
+var canvas = document.getElementById("myCanvas");
+if(!canvas)
+    alert("Cannot get canvas");
+
+var ctx = canvas.getContext("2d");
+if(!ctx)
+    alert("Cannot get context");
+
 function draw_path(context, waypoints)
 {
-    function draw_arc(w1, w2, w3)
+    function drawArc(w1, w2, w3)
     {
         context.beginPath();
         context.moveTo(w1.x, w1.y, w2.y);
@@ -29,7 +39,7 @@ function draw_path(context, waypoints)
         //Draw the line + arc
         for(var i = 0; i<wps.length-2; i++)
         {
-            draw_arc(wps[i], wps[i+1], wps[i+2]);
+            drawArc(wps[i], wps[i+1], wps[i+2]);
 
             context.beginPath();
             context.moveTo(wps[i].x, wps[i].y);
@@ -55,24 +65,9 @@ function draw_path(context, waypoints)
         }
     }
 }
-</script>
-
-<script type="text/javascript">
-var canvas = document.getElementById("myCanvas");
-if(!canvas)
-{
-    alert("Cannot get canvas");
-}
-
-var ctx = canvas.getContext("2d");
-if(!ctx)
-{
-    alert("Cannot get context");
-}
 
 window.onload = function()
 {
-
     var waypoints = [];
 
     //Pre populate waypoints with random data
@@ -97,7 +92,6 @@ window.onload = function()
       waypoints.push({x: x, y: y});
       draw_path(ctx, waypoints);
     }
-
 }
 
 function drawRosPath(rosPath)
@@ -114,9 +108,6 @@ function drawRosPath(rosPath)
     draw_path(ctx, pathWaypoints);
     console.log("Done drawing");
 }
-
-</script>
-<script type="text/javascript" type="text/javascript">
   // Connecting to ROS
   // -----------------
 
@@ -181,7 +172,6 @@ function loadPath()
         }
     }
 }
-  console.log("Finished");
 </script>
 
 </body>

@@ -5,21 +5,38 @@
   <include file="$(find gazebo_ros)/launch/empty_world.launch" unless="$(arg nogz)">
   </include>
 
+  <!--
   <rosparam command="load" file="$(find merlin_description)/config/joy_teleop.yaml"/>
   <rosparam param="joy_node/dev">"/dev/input/js0"</rosparam>
 
   <node pkg="joy" type="joy_node" name="joy_node"/>
   <node pkg="joy_teleop" type="joy_teleop.py" name="joy_teleop"/>
+  -->
+
+  <node pkg="merlin_nav" type="path_store.py" name="path_store" />
 
   <!-- Load the URDF into the ROS Parameter Server -->
-  <param name="/merlin/robot_description"
-     command="$(find xacro)/xacro.py '$(find merlin_description)/urdf/merlin.urdf.xacro'" />
+  <group ns="merlin">
+  <arg name="ns" default="merlin"/>
+  <param name="robot_description"
+     command="$(find xacro)/xacro.py '$(find merlin_description)/urdf/merlin.urdf.xacro' robot_name:=$(arg ns)" />
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
     args="-urdf -model merlin -param /merlin/robot_description"/>
 
   <include file="$(find merlin_control)/launch/merlin_control.launch" />
+  </group>
 
-  <node pkg="merlin_nav" type="path_store.py" name="path_store" />
+  <group ns="merlin2">
+  <arg name="ns" default="merlin2"/>
+  <param name="robot_description"
+     command="$(find xacro)/xacro.py '$(find merlin_description)/urdf/merlin.urdf.xacro' robot_name:=$(arg ns)" />
+
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args="-urdf -model merlin2 -param /merlin2/robot_description -x 2"/>
+
+  <include file="$(find merlin_control)/launch/merlin_control.launch" />
+  </group>
+
 </launch>

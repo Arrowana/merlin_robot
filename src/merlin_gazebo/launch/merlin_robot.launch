@@ -1,0 +1,14 @@
+<launch>
+  <arg name="robot_name" default="merlin"/>
+  <arg name="offset" default="0" />
+
+  <group ns="$(arg robot_name)">
+    <param name="robot_description"
+     command="$(find xacro)/xacro.py '$(find merlin_description)/urdf/merlin.urdf.xacro' robot_name:=$(arg robot_name)" />
+
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+      args="-urdf -model $(arg robot_name) -param /$(arg robot_name)/robot_description -x $(arg offset)" />
+
+    <include file="$(find merlin_control)/launch/merlin_control.launch" />
+  </group>
+</launch>

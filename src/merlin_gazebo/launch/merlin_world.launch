@@ -1,0 +1,16 @@
+<launch>
+  <arg name="nogz" default="false"/>
+  <arg name="teleop" default="false"/>  
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch" unless="$(arg nogz)">
+  </include>
+
+  <!--
+  <rosparam command="load" file="$(find merlin_description)/config/joy_teleop.yaml"/>
+  <rosparam param="joy_node/dev">"/dev/input/js0"</rosparam>
+
+  <node pkg="joy" type="joy_node" name="joy_node"/>
+  <node pkg="joy_teleop" type="joy_teleop.py" name="joy_teleop"/>
+  -->
+
+</launch>
