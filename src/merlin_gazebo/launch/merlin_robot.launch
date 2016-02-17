@@ -10,5 +10,6 @@
       args="-urdf -model $(arg robot_name) -param /$(arg robot_name)/robot_description -x $(arg offset)" />
 
     <include file="$(find merlin_control)/launch/merlin_control.launch" />
+    <node pkg="merlin_nav" type="brain.py" name="brain"/>
   </group>
 </launch>
