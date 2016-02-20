@@ -22,16 +22,17 @@ class SegmentTracker:
 		self.pose = Pose2D() # Current pose of the robot
 		
 		rospy.init_node('segment_tracking')
-		rospy.Subscriber("/merlin/mobile_base_controller/odom", Odometry, self.pose_callback)
+		rospy.Subscriber("/merlin/base_controller/odom", Odometry, self.pose_callback)
 		rospy.Subscriber("/target_point", Pose2D, self.guidance_callback)
-		self.gazebo_pub = rospy.Publisher("/merlin/mobile_base_controller/cmd_vel", Twist, queue_size=10)
+		self.gazebo_pub = rospy.Publisher("/merlin/base_controller/cmd_vel", Twist, queue_size=10)
 
 		rate = rospy.Rate(10) # 10hz
 		while not rospy.is_shutdown():
+			print self.gazebo_cmd
 			self.gazebo_pub.publish(self.gazebo_cmd)
 			rate.sleep()
 
-	def norm_angle(angle):
+	def norm_angle(self,angle):
 		angle=angle % 360
 		angle=(angle+360) % 360
 		if(angle>180):
