@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+<script>
+    function init(){
+        var stage = new createjs.Stage("demoCanvas");
+
+        var s= new createjs.Shape();
+        s.graphics.beginStroke("red").setStrokeStyle(20);
+
+        s.addEventListener("click", handleclick);
+
+        function handleclick(event){console.log("OKOK");}
+
+        var arc = new createjs.Graphics.ArcTo(100, 10, 100, 100, 50);
+        s.graphics.append(arc);
+
+        stage.addChild(s);
+        stage.update();
+    }
+</script>
+<body onload="init();">
+<canvas id="demoCanvas" width="500" height="300"></canvas>
+
+</body>
+</html>
+

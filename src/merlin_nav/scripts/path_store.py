@@ -1,12 +1,13 @@
 #!/usr/bin/python
 import rosbag
 import rospy
+import rospkg
 
 from geometry_msgs.msg import Pose2D
 from merlin_msgs.msg import Path2D
 from merlin_msgs.srv import GetPaths, SavePath
 
-PATH_FILE = 'paths.bag' 
+PATH_FILE = rospkg.RosPack().get_path('merlin_nav')+'/paths.bag' 
 
 def load_paths():
     loaded_paths = []

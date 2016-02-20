@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<script type="text/javascript" src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script type="text/javascript" src="http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+  // Connecting to ROS
+  // -----------------
+
+  var ros = new ROSLIB.Ros({
+    url : 'ws://localhost:9090'
+  });
+
+  ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+  });
+
+  ros.on('error', function(error) {
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  ros.on('close', function() {
+    console.log('Connection to websocket server closed.');
+  });
+
+  // Calling a service
+  // -----------------
+
+  var getPathsClient = new ROSLIB.Service({
+    ros : ros,
+    name : '/get_paths',
+    serviceType : 'merlin_msgs/GetPaths'
+  });
+
+  var request = new ROSLIB.ServiceRequest({});
+  var paths = []
+
+  getPathsClient.callService(request, function(result) {
+    console.log('Result for service call '
+      + result.paths + result.length);
+    paths = result.paths;
+    build_select();
+  });
+
+function build_select(){
+  var select = document.getElementById('pathSelect');
+  for(var i = 0; i < paths.length; i++){
+    var el = document.createElement("option");
+    el.textContent = paths[i].name;
+    console.log("element created");
+    select.appendChild(el);
+  }
+}
+  console.log("Finished");
+</script>
+</head>
+
+<body>
+  <h1>Simple roslib Example</h1>
+    <select id="pathSelect">
+        <option>Choose a path</option>
+    </select>
+</body>
+</html>

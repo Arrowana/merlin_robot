@@ -1,0 +1,9 @@
+<launch>
+  <!--
+  <rosparam command="load" file="$(find merlin_description)/config/joy_teleop.yaml"/>
+  <rosparam param="joy_node/dev">"/dev/input/js0"</rosparam>
+
+  <node pkg="joy" type="joy_node" name="joy_node"/>
+  <node pkg="joy_teleop" type="joy_teleop.py" name="joy_teleop"/>
+  -->
+</launch>
