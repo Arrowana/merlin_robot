@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#bllalala
+
 import rospy
 import numpy as np
 import tf.transformations as tflib
@@ -58,7 +58,7 @@ class SegmentTracker:
 		dx = target.x - segment_start.x
 		dy = target.y - segment_start.y
 		print dx,dy
-		# change1
+		
 		while( np.abs(dx)>0.01 or np.abs(dy)>0.01 ):
 			segment_start.x = self.pose.x
 			segment_start.y = self.pose.y
