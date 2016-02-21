@@ -36,7 +36,8 @@
   });
 
   var request = new ROSLIB.ServiceRequest({});
-  var paths = []
+  var paths = [];
+  var robots = [];
 
   getPathsClient.callService(request, function(result) {
     console.log('Result for service call '
@@ -45,23 +46,88 @@
     build_select();
   });
 
+  //Send to receive who is alive
+  var wia = new ROSLIB.Topic({
+    ros: ros,
+    name: '/who_is_alive',
+    messageType: 'std_msgs/Bool'
+  });
+
+wia.publish(ROSLIB.Message({data: true}));
+
+  var aliveSub = new ROSLIB.Topic({
+    ros: ros,
+    name: '/alive',
+    messageType: 'std_msgs/String'
+});
+
+  aliveSub.subscribe(function(message){
+    var robot_name = message.data;
+    console.log(robot_name);
+    robots.push(robot_name);
+    var select = document.getElementById('robotSelect');
+    var el = document.createElement('option');
+    el.textContent = robot_name;
+    select.appendChild(el);
+    });
+
 function build_select(){
   var select = document.getElementById('pathSelect');
   for(var i = 0; i < paths.length; i++){
     var el = document.createElement("option");
     el.textContent = paths[i].name;
+    el.onmouseover = function(e){console.log("yooyoy");};
     console.log("element created");
     select.appendChild(el);
   }
 }
+
+function startPath(){
+  var selectPath = document.getElementById('pathSelect');
+  var selectRobot = document.getElementById('robotSelect');
+
+  var path_name = selectPath.options[selectPath.selectedIndex].value;  
+  var robot_name = selectRobot.options[selectRobot.selectedIndex].value;
+  console.log("Start navigation: " + robot_name+ " ,path: " + path_name);
+  
+  var topic_name = robot_name+"path";
+  console.log(topic_name);
+  
+  var pathPub = new ROSLIB.Topic({
+    ros: ros,
+    name: topic_name,
+    messageType: 'merlin_msgs/Path2D'
+  });
+
+  //find the path in paths with the path_name
+  for(var i=0;i<paths.length;i++)
+  {
+    if(paths[i].name == path_name)
+    {
+      path = paths[i];
+      break;
+    } 
+  } 
+  pathPub.publish(path);
+}
+
   console.log("Finished");
 </script>
 </head>
 
 <body>
-  <h1>Simple roslib Example</h1>
-    <select id="pathSelect">
-        <option>Choose a path</option>
+  <h1>Yo!</h1>
+    <select id="robotSelect">
+        <option>Choose robot</option>
     </select>
+    <select id="pathSelect">
+        <option onmouseover="console.log('over');" >Choose a path</option>
+    </select>
+    <button onclick="startPath();">
+    Start
+    </button>
+    <button>
+    Stop
+    </button>
 </body>
 </html>
