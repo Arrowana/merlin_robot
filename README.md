@@ -20,7 +20,7 @@ roslaunch merlin.launch nogz:=true
 USEFUL COMMANDS:
 roslaunch rosbridge_server rosbridge_websocket.launch
 
-rostopic pub -r 10 merlin/base_contller/cmd_vel geometry_msgs/Twist '[0.5, 0, 0]' '[0,0,0.4]'
+rostopic pub -r 10 merlin/base_controller/cmd_vel geometry_msgs/Twist '[0.5, 0, 0]' '[0,0,0.4]'
 
 //Set the position via inital_pose (safe)
 rostopic pub merlin/inital_pose geometry_msgs/Pose2D '{x: 0, y:0, theta: 0}'
@@ -63,4 +63,20 @@ rosservice call /save_path "path:
     theta: 0.0
   - x: 4.0
     y: 4.0
+    theta: 0.0"
+
+rosservice call /save_path "path:
+  name: 'second'
+  poses:
+  - x: 5.0
+    y: 10.0
+    theta: 0.0
+  - x: 5.0
+    y: 15.0
+    theta: 0.0
+  - x: 22.0
+    y: 15.0
+    theta: 0.0
+  - x: 25.0
+    y: 10.0
     theta: 0.0"
