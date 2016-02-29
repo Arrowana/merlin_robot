@@ -66,6 +66,22 @@ rosservice call /save_path "path:
     theta: 0.0"
 
 rosservice call /save_path "path:
+  name: 'third'
+  poses:
+  - x: 5.0
+    y: 10.0
+    theta: 0.0
+  - x: 5.0
+    y: 15.0
+    theta: 0.0
+  - x: 22.0
+    y: 15.0
+    theta: 0.0
+  - x: 25.0
+    y: 10.0
+    theta: 0.0"
+
+rostopic pub merlin/path merlin_msgs/Path2D "
   name: 'second'
   poses:
   - x: 5.0
@@ -80,3 +96,7 @@ rosservice call /save_path "path:
   - x: 25.0
     y: 10.0
     theta: 0.0"
+    
+rosservice call start_path merlin_msgs/StartPath '
+  robot_name: "merlin"
+  path_name: "first"'

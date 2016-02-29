@@ -13,7 +13,7 @@ def cap_angle(angle):
     if angle > math.pi:
         angle -= 2*math.pi
     elif angle < -math.pi:
-        angle += 2*m.pi
+        angle += 2*math.pi
     
     return angle
 

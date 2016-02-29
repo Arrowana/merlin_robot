@@ -36,9 +36,10 @@ class FakeLocalization(object):
         rospy.spin()
 
     def current_state(self):
+        rospy.loginfo("Get model state to set fake localization")
         #Send pose to gazebo
         get_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-        resp = get_state(model_name="merlin")
+        resp = get_state(model_name=rospy.get_namespace()[1:-1], relative_entity_name="world")
         print resp
         
         initial_pose = Pose2D()

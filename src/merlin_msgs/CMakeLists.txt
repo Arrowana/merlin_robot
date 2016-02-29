@@ -22,6 +22,7 @@ add_service_files(
   FILES
   GetPaths.srv
   SavePath.srv
+  StartPath.srv
 )
 
 ## Generate actions in the 'action' folder

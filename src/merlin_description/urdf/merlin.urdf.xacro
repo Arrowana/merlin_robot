@@ -87,7 +87,7 @@
   <joint name="base_to_lwheel" type="continuous">
     <parent link="base_link"/>
     <child link="lwheel"/>
-    <origin xyz="0 -0.115 0.046" rpy="1.5708 0 0"/>
+    <origin xyz="0 0.115 0.046" rpy="1.5708 0 3.14"/>
     <axis xyz="0 0 1"/>
     <dynamics damping="0.7"/>
   </joint>
@@ -119,7 +119,7 @@
   <joint name="base_to_rwheel" type="continuous">
     <parent link="base_link"/>
     <child link="rwheel"/>
-    <origin xyz="0 0.115 0.046" rpy="1.5708 0 0"/>
+    <origin xyz="0 -0.115 0.046" rpy="1.5708 0 3.14"/>
     <axis xyz="0 0 1"/>
     <dynamics damping="0.7"/>
   </joint>
@@ -129,7 +129,7 @@
       <geometry>
         <cylinder length="0.060" radius="0.023"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0.13 0 0.08"/>
+      <origin rpy="0 0 0" xyz="-0.13 0 0.08"/>
       <material name="white">
         <color rgba="1 1 1 1"/>
       </material>
@@ -182,7 +182,7 @@
   <joint name="base_to_fwheel" type="fixed">
     <parent link="base_link"/>
     <child link="fwheel"/>
-    <origin xyz="0.13 0 0.02" rpy="0 0 0"/>
+    <origin xyz="-0.13 0 0.02" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
   
