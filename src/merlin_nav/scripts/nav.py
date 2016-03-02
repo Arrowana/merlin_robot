@@ -1,8 +1,13 @@
 #!/usr/bin/python
+"""
+    Nav is performing navigation given a path. When path is finish it reports to the brain
+"""
 import rospy
 
 from merlin_msgs.msg import Path2D
 from geometry_msgs.msg import Pose2D, Twist
+
+from std_srvs.srv import Trigger
 
 import control
 import math
@@ -78,9 +83,17 @@ class PathController(object):
                 self.speed_pub.publish(twist)
                 rospy.sleep(0.1)
 
+        rospy.loginfo("End of path reached")
+
 def path_received(path_msg):
     rospy.loginfo("Path received")
     PathController(path_msg)
+
+    rospy.loginfo("Path completed")
+
+    #Report that control is done
+    report_done = rospy.ServiceProxy("ready", Trigger)
+    report_done()
 
 if __name__ == '__main__':
     rospy.init_node("navigator")        

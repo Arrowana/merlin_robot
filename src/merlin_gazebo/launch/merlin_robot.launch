@@ -11,7 +11,7 @@
 
     <include file="$(find merlin_control)/launch/merlin_control.launch" />
     <node pkg="merlin_nav" type="brain.py" name="brain"/>
-    <node pkg="merlin_nav" type="fake_localization2D.py" name="fake_localization"/>
+    <node pkg="merlin_nav" type="pose_from_gazebo.py" name="fake_localization"/>
     <node pkg="merlin_nav" type="nav.py" name="navigator"/>
   </group>
 </launch>
